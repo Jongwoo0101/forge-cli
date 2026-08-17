@@ -8,12 +8,13 @@
 
 ---
 
+# ForgeCLI
+
 ForgeCLI is a shell that drives the
 [ForgeFramework](https://github.com/Jongwoo0101/forge-framework) kernel from a terminal.
 Create processes, allocate memory, write files, and deliberately construct a deadlock so you
 can watch it be detected and recovered — **one command at a time**.
 
-<img src="assets/forge-logo.svg" alt="Forge" width="76" align="right">
 
 This repository contains no kernel code. The kernel arrives as a Maven artifact, and the
 dependency is **one-way**: if ForgeCLI disappeared, the kernel would not notice.
@@ -436,11 +437,11 @@ forge-cli/
     <td><b>forge-cli</b><br><sub>This repository — the kernel's command-line client</sub></td>
   </tr>
   <tr>
-    <td width="64" align="center">🖥️</td>
+    <td width="64" align="center"></td>
     <td><b>ForgeOS</b><br><sub>JavaFX GUI operating-system simulator (planned)</sub></td>
   </tr>
   <tr>
-    <td width="64" align="center">📚</td>
+    <td width="64" align="center"></td>
     <td><b>ForgeStudio</b><br><sub>Operating-system teaching and visualisation platform (planned)</sub></td>
   </tr>
 </table>
