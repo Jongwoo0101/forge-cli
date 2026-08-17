@@ -1,6 +1,8 @@
 <div align="center">
 
-<img src="assets/forge-cli-banner.svg" alt="ForgeCLI — Interactive Terminal Client for ForgeFramework Kernel" width="860">
+<p align="center">
+  <img src="https://raw.githubusercontent.com/<사용자ID>/<저장소명>/main/assets/forge-cli-banner.svg" alt="ForgeCLI Banner" width="100%" style="max-width: 860px;">
+</p>
 
 **🇰🇷 한국어 문서** · [English](README.en.md)
 
