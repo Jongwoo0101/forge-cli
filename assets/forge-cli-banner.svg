@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 320" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="cliBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B0E14" />
+      <stop offset="50%" stop-color="#111622" />
+      <stop offset="100%" stop-color="#07090E" />
+    </linearGradient>
+
+    <!-- Molten Fire Gradient -->
+    <linearGradient id="cliFireGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF2A00" />
+      <stop offset="45%" stop-color="#FF6B00" />
+      <stop offset="85%" stop-color="#FFB700" />
+      <stop offset="100%" stop-color="#FFF0B3" />
+    </linearGradient>
+
+    <!-- Terminal Cyan / Green Gradient -->
+    <linearGradient id="cliTerminalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00F0FF" />
+      <stop offset="100%" stop-color="#00E599" />
+    </linearGradient>
+
+    <!-- Steel Shading -->
+    <linearGradient id="cliSteelLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D3748" />
+      <stop offset="100%" stop-color="#1A202C" />
+    </linearGradient>
+    <linearGradient id="cliSteelRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4A5568" />
+      <stop offset="100%" stop-color="#2D3748" />
+    </linearGradient>
+    <linearGradient id="cliSteelTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#718096" />
+      <stop offset="100%" stop-color="#4A5568" />
+    </linearGradient>
+
+    <!-- Glowing Filters -->
+    <filter id="cliCoreGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="14" result="blur1" />
+      <feGaussianBlur stdDeviation="28" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur2" />
+        <feMergeNode in="blur1" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="cliSubtleGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Banner Background Canvas -->
+  <rect width="1000" height="320" rx="20" fill="url(#cliBgGrad)" stroke="#1F2937" stroke-width="1.5" />
+
+  <!-- Background Decorative Grid Lines -->
+  <g opacity="0.05" stroke="#00F0FF" stroke-width="1.2">
+    <line x1="80" y1="0" x2="80" y2="320" />
+    <line x1="200" y1="0" x2="200" y2="320" />
+    <line x1="320" y1="0" x2="320" y2="320" />
+    <line x1="440" y1="0" x2="440" y2="320" />
+    <line x1="0" y1="80" x2="1000" y2="80" />
+    <line x1="0" y1="160" x2="1000" y2="160" />
+    <line x1="0" y1="240" x2="1000" y2="240" />
+  </g>
+
+  <!-- Ambient Glow behind Logo -->
+  <circle cx="215" cy="160" r="110" fill="#FF5500" opacity="0.18" filter="url(#cliCoreGlow)" />
+  <circle cx="215" cy="160" r="60" fill="#00F0FF" opacity="0.1" filter="url(#cliCoreGlow)" />
+
+  <!-- ==================== EMBLEM: ANVIL + TERMINAL PROMPT ==================== -->
+  <g transform="translate(90, 38)">
+    <!-- Base Plate -->
+    <path d="M 65 210 L 185 210 L 205 235 L 45 235 Z" fill="#141923" stroke="#2D3748" stroke-width="1.5" />
+
+    <!-- Anvil Waist Stem -->
+    <path d="M 95 160 L 155 160 L 165 210 L 85 210 Z" fill="#1A202C" stroke="#2D3748" stroke-width="1.5" />
+
+    <!-- Anvil Body & Horn (Left Bevel) -->
+    <path d="M 40 100 L 125 100 L 125 160 L 75 160 L 30 115 Z" fill="url(#cliSteelLeft)" stroke="#374151" stroke-width="1.5" />
+
+    <!-- Anvil Body (Right Heel) -->
+    <path d="M 125 100 L 215 100 L 225 125 L 185 160 L 125 160 Z" fill="url(#cliSteelRight)" stroke="#4B5563" stroke-width="1.5" />
+
+    <!-- Anvil Top Face (Working Surface) -->
+    <polygon points="40,100 80,75 225,75 215,100" fill="url(#cliSteelTop)" stroke="#718096" stroke-width="1.5" />
+
+    <!-- Terminal Prompt Engraving '> _' -->
+    <g stroke="#00F0FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#cliSubtleGlow)">
+      <!-- Prompt Chevron '>' -->
+      <path d="M 65 130 L 78 140 L 65 150" />
+      <!-- Prompt Cursor '_' -->
+      <line x1="86" y1="150" x2="102" y2="150" stroke="#00E599" stroke-width="2.5" />
+    </g>
+
+    <!-- Circuit Trace Lines (Right Plate) -->
+    <g stroke="#FF6B00" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.85" filter="url(#cliSubtleGlow)">
+      <path d="M 205 115 L 180 135 L 150 135" />
+      <circle cx="150" cy="135" r="2.5" fill="#FFB700" />
+      <path d="M 165 180 L 140 180 L 130 195" />
+      <circle cx="165" cy="180" r="2.5" fill="#FF6B00" />
+    </g>
+
+    <!-- THE MOLTEN FORGE FLAME -->
+    <g filter="url(#cliCoreGlow)">
+      <!-- Outer Flame -->
+      <path d="M 125 35 C 145 65, 170 85, 155 125 C 140 105, 135 115, 125 125 C 115 115, 110 105, 95 125 C 80 85, 105 65, 125 35 Z" fill="url(#cliFireGrad)" />
+      <!-- Inner Core White Heat -->
+      <path d="M 125 65 C 135 85, 145 95, 138 115 C 130 108, 125 112, 125 118 C 125 112, 120 108, 112 115 C 105 95, 115 85, 125 65 Z" fill="#FFFFFF" opacity="0.95" />
+    </g>
+
+    <!-- Rising Forging Sparks -->
+    <circle cx="108" cy="42" r="2" fill="#FFD000" filter="url(#cliSubtleGlow)" />
+    <circle cx="145" cy="30" r="2.5" fill="#00F0FF" filter="url(#cliSubtleGlow)" />
+    <circle cx="130" cy="15" r="1.8" fill="#FFF" filter="url(#cliSubtleGlow)" />
+  </g>
+
+  <!-- ==================== TYPOGRAPHY & BRANDING ==================== -->
+  <g transform="translate(370, 0)">
+    <!-- Main Title: FORGE -->
+    <text x="0" y="132" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="64" letter-spacing="6" fill="#FFFFFF">
+      FORGE
+    </text>
+
+    <!-- Sub-Wordmark: CLI -->
+    <text x="260" y="132" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="64" letter-spacing="4" fill="url(#cliTerminalGrad)">
+      CLI
+    </text>
+
+    <!-- Accent Terminal Cursor -->
+    <rect x="400" y="85" width="14" height="48" rx="2" fill="#00F0FF" opacity="0.9" filter="url(#cliSubtleGlow)" />
+
+    <!-- Tagline -->
+    <text x="4" y="174" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif" font-weight="500" font-size="18" fill="#94A3B8" letter-spacing="0.5">
+      Interactive Terminal Client for ForgeFramework Kernel
+    </text>
+
+    <!-- CLI Feature Pills -->
+    <g transform="translate(4, 202)">
+      <!-- Pill 1: Standalone Fat JAR -->
+      <rect x="0" y="0" width="136" height="26" rx="6" fill="#161B22" stroke="#30363D" stroke-width="1" />
+      <circle cx="12" cy="13" r="3.5" fill="#00F0FF" />
+      <text x="24" y="17" font-family="-apple-system, BlinkMacSystemFont, 'JetBrains Mono', 'SF Mono', monospace" font-weight="600" font-size="11" fill="#E2E8F0" letter-spacing="0.5">STANDALONE JAR</text>
+
+      <!-- Pill 2: REPL Shell -->
+      <rect x="146" y="0" width="112" height="26" rx="6" fill="#161B22" stroke="#30363D" stroke-width="1" />
+      <circle cx="158" cy="13" r="3.5" fill="#FF6B00" />
+      <text x="170" y="17" font-family="-apple-system, BlinkMacSystemFont, 'JetBrains Mono', 'SF Mono', monospace" font-weight="600" font-size="11" fill="#E2E8F0" letter-spacing="0.5">REPL SHELL</text>
+
+      <!-- Pill 3: Zero Overhead -->
+      <rect x="268" y="0" width="138" height="26" rx="6" fill="#161B22" stroke="#30363D" stroke-width="1" />
+      <circle cx="280" cy="13" r="3.5" fill="#00E599" />
+      <text x="292" y="17" font-family="-apple-system, BlinkMacSystemFont, 'JetBrains Mono', 'SF Mono', monospace" font-weight="600" font-size="11" fill="#E2E8F0" letter-spacing="0.5">ZERO OVERHEAD</text>
+    </g>
+  </g>
+</svg>

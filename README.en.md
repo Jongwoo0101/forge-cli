@@ -1,13 +1,19 @@
-# ForgeCLI
+<div align="center">
 
-**Command-line client for the ForgeFramework kernel**
+<img src="assets/forge-cli-banner.svg" alt="ForgeCLI — Interactive Terminal Client for ForgeFramework Kernel" width="860">
 
-> 🇺🇸 English (한국어: [README.md](README.md))
+[한국어](README.md) · **🇺🇸 English**
+
+</div>
+
+---
 
 ForgeCLI is a shell that drives the
 [ForgeFramework](https://github.com/Jongwoo0101/forge-framework) kernel from a terminal.
 Create processes, allocate memory, write files, and deliberately construct a deadlock so you
 can watch it be detected and recovered — **one command at a time**.
+
+<img src="assets/forge-logo.svg" alt="Forge" width="76" align="right">
 
 This repository contains no kernel code. The kernel arrives as a Maven artifact, and the
 dependency is **one-way**: if ForgeCLI disappeared, the kernel would not notice.
@@ -378,6 +384,7 @@ meminfo                ← tlbHits / tlbMisses / hitRatio
 
 ```text
 forge-cli/
+├── assets/                          # logo and banner SVGs (README and releases)
 ├── build.gradle.kts                 # depends on the kernel as a Maven artifact
 ├── settings.gradle.kts
 ├── gradle.properties                # forgeFrameworkVersion=1.0
@@ -415,11 +422,28 @@ forge-cli/
 
 ## Related repositories
 
-| Repository | Description |
-|---|---|
-| [forge-framework](https://github.com/Jongwoo0101/forge-framework) | The kernel engine this project depends on · [API docs](https://github.com/Jongwoo0101/forge-framework/blob/master/docs/api/README.en.md) |
-| ForgeOS | JavaFX GUI operating-system simulator (planned) |
-| ForgeStudio | Operating-system teaching and visualisation platform (planned) |
+<table>
+  <tr>
+    <td width="64" align="center"><img src="assets/forge-framework-logo.svg" alt="" width="48"></td>
+    <td>
+      <b><a href="https://github.com/Jongwoo0101/forge-framework">forge-framework</a></b><br>
+      <sub>The kernel engine this project depends on ·
+      <a href="https://github.com/Jongwoo0101/forge-framework/blob/master/docs/api/README.en.md">API docs</a></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="64" align="center"><img src="assets/forge-cli-logo.svg" alt="" width="48"></td>
+    <td><b>forge-cli</b><br><sub>This repository — the kernel's command-line client</sub></td>
+  </tr>
+  <tr>
+    <td width="64" align="center">🖥️</td>
+    <td><b>ForgeOS</b><br><sub>JavaFX GUI operating-system simulator (planned)</sub></td>
+  </tr>
+  <tr>
+    <td width="64" align="center">📚</td>
+    <td><b>ForgeStudio</b><br><sub>Operating-system teaching and visualisation platform (planned)</sub></td>
+  </tr>
+</table>
 
 ---
 

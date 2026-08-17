@@ -1,12 +1,18 @@
-# ForgeCLI
+<div align="center">
 
-**Command-line client for the ForgeFramework kernel**
+<img src="assets/forge-cli-banner.svg" alt="ForgeCLI — Interactive Terminal Client for ForgeFramework Kernel" width="860">
 
-> 🇰🇷 한국어 문서 (English version: [README.en.md](README.en.md))
+**🇰🇷 한국어 문서** · [English](README.en.md)
+
+</div>
+
+---
 
 ForgeCLI는 [ForgeFramework](https://github.com/Jongwoo0101/forge-framework) 커널을
 터미널에서 조작하는 셸입니다. 프로세스를 만들고, 메모리를 할당하고, 파일을 쓰고,
 교착 상태를 일부러 만들어 탐지·복구하는 과정을 **명령어 한 줄씩** 눈으로 볼 수 있습니다.
+
+<img src="assets/forge-logo.svg" alt="Forge" width="76" align="right">
 
 이 저장소에는 커널 코드가 없습니다. 커널은 Maven 아티팩트로 가져오며,
 **의존은 단방향**입니다 — ForgeCLI가 사라져도 커널은 아무 영향을 받지 않습니다.
@@ -380,6 +386,7 @@ meminfo                ← tlbHits / tlbMisses / hitRatio
 
 ```text
 forge-cli/
+├── assets/                          # 로고·배너 SVG (README 및 릴리즈용)
 ├── build.gradle.kts                 # 커널을 Maven 아티팩트로 의존
 ├── settings.gradle.kts
 ├── gradle.properties                # forgeFrameworkVersion=1.0
@@ -416,11 +423,28 @@ forge-cli/
 
 ## 관련 저장소
 
-| 저장소 | 설명 |
-|---|---|
-| [forge-framework](https://github.com/Jongwoo0101/forge-framework) | 커널 엔진 (본 프로젝트가 의존) · [API 문서](https://github.com/Jongwoo0101/forge-framework/blob/master/docs/api/README.md) |
-| ForgeOS | JavaFX 기반 GUI 운영체제 시뮬레이터 (예정) |
-| ForgeStudio | 운영체제 교육 · 시각화 플랫폼 (예정) |
+<table>
+  <tr>
+    <td width="64" align="center"><img src="assets/forge-framework-logo.svg" alt="" width="48"></td>
+    <td>
+      <b><a href="https://github.com/Jongwoo0101/forge-framework">forge-framework</a></b><br>
+      <sub>커널 엔진 — 본 프로젝트가 의존합니다 ·
+      <a href="https://github.com/Jongwoo0101/forge-framework/blob/master/docs/api/README.md">API 문서</a></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="64" align="center"><img src="assets/forge-cli-logo.svg" alt="" width="48"></td>
+    <td><b>forge-cli</b><br><sub>본 저장소 — 커널의 명령줄 클라이언트</sub></td>
+  </tr>
+  <tr>
+    <td width="64" align="center">🖥️</td>
+    <td><b>ForgeOS</b><br><sub>JavaFX 기반 GUI 운영체제 시뮬레이터 (예정)</sub></td>
+  </tr>
+  <tr>
+    <td width="64" align="center">📚</td>
+    <td><b>ForgeStudio</b><br><sub>운영체제 교육 · 시각화 플랫폼 (예정)</sub></td>
+  </tr>
+</table>
 
 ---
 
