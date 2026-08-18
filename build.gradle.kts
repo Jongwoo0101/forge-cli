@@ -11,6 +11,15 @@
 plugins {
     java
     application
+    // ForgeOS(JavaFX)의 Terminal 앱이 명령어 계층을 재사용하므로, CLI도 커널과
+    // 똑같이 mavenLocal에 올라가는 라이브러리가 되어야 한다.
+    //
+    //     ./gradlew publishToMavenLocal
+    //
+    // 실행 파일이면서 동시에 라이브러리인 것은 어중간해 보이지만, 명령어 파서를
+    // 두 벌 유지하는 것보다는 이쪽이 훨씬 싸다. 개방한 것은 command/shell
+    // 두 패키지뿐이고 System.in에 묶인 ForgeShell은 CLI에 그대로 남아 있다.
+    `maven-publish`
 }
 
 group = "io.github.jongwoo0101"
@@ -112,5 +121,42 @@ tasks.withType<Javadoc>().configureEach {
         locale = "ko"
         addBooleanOption("Xdoclint:all,-missing", true)
         addBooleanOption("Werror", true)
+    }
+}
+
+// ── 배포 ───────────────────────────────────────────────────────────
+//
+// ForgeOS는 커널(forgeframework)과 명령어 계층(forgecli)을 모두 mavenLocal에서
+// 가져온다. 여기서 나가는 것은 fatJar가 아니라 일반 jar다 — 클라이언트는
+// 커널을 이미 직접 의존하고 있으므로 커널이 두 번 들어가면 안 된다.
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            artifactId = "forgecli"
+
+            pom {
+                name = "ForgeCLI"
+                description = "Command-line client and shared command layer for the ForgeFramework kernel"
+                url = "https://github.com/Jongwoo0101/forge-cli"
+
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://opensource.org/licenses/MIT"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "Jongwoo0101"
+                        name = "Jongwoo Won"
+                    }
+                }
+                scm {
+                    url = "https://github.com/Jongwoo0101/forge-cli"
+                    connection = "scm:git:https://github.com/Jongwoo0101/forge-cli.git"
+                }
+            }
+        }
     }
 }
