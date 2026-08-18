@@ -16,6 +16,10 @@ package forgeframework.cli.shell;
  */
 public final class ShellContext {
 
+
+    /** 기본 생성자 — 상태가 없어 인자를 받지 않는다. */
+    public ShellContext() {
+    }
     private String currentWorkingDirectory = "/";
 
     public String getCwd() {
