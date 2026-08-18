@@ -108,17 +108,31 @@ README 변경 내역:
 
 ---
 
-## 커밋 후
+## 커밋 후 — 릴리즈
 
 ```bash
 ./gradlew clean build              # 경고 0건 확인
 ./gradlew publishToMavenLocal      # io.github.jongwoo0101:forgecli:1.0.1
 
+git push origin main
 git tag -a v1.0.1 -m "ForgeCLI 1.0.1"
-git push origin main --tags
+git push origin v1.0.1
 ```
 
-릴리즈에 첨부할 산출물은 `build/libs/forgecli-1.0.1-all.jar` 하나다.
+기존 `v1.0` 태그는 그대로 두고 **새 태그 `v1.0.1`** 을 만든다. 이미 공개된 릴리즈의
+태그를 재사용하면 그 시점의 소스를 받아 간 사람이 다른 코드를 보게 된다.
+
+GitHub → Releases → **Draft a new release**
+
+| 항목 | 값 |
+|---|---|
+| Tag | `v1.0.1` |
+| Target | `main` |
+| Title | `ForgeCLI 1.0.1` |
+| 본문 | `docs/RELEASE_NOTES_1.0.1.md` 전체 붙여넣기 |
+| 첨부 | `build/libs/forgecli-1.0.1-all.jar` (필요하면 `-sources.jar` 도) |
+
+`Set as the latest release` 체크. Pre-release 아님.
 
 ## 검증 (이번 세션에서 확인한 것)
 
