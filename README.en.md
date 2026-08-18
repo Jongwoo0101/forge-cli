@@ -42,6 +42,7 @@ dependency is **one-way**: if ForgeCLI disappeared, the kernel would not notice.
   - [Devices and interrupts](#devices-and-interrupts)
   - [Resources and deadlock](#resources-and-deadlock)
 - [Learn by scenario](#learn-by-scenario)
+- [Using it as a library](#using-it-as-a-library)
 - [Project layout](#project-layout)
 - [License](#license)
 
@@ -71,7 +72,7 @@ git clone https://github.com/Jongwoo0101/forge-cli.git
 cd forge-cli
 
 ./scripts/build.sh                 # or ./gradlew build
-./scripts/run.sh                   # or java -jar build/libs/forgecli-1.0-all.jar
+./scripts/run.sh                   # or java -jar build/libs/forgecli-1.0.1-all.jar
 ```
 
 While developing, launching straight from Gradle is quicker:
@@ -84,8 +85,8 @@ While developing, launching straight from Gradle is quicker:
 
 | File | Description |
 |---|---|
-| `build/libs/forgecli-1.0-all.jar` | **Single runnable jar with the kernel bundled in.** Download and `java -jar` it. |
-| `build/libs/forgecli-1.0.jar` | Thin jar. Requires the kernel jar on the classpath to run. |
+| `build/libs/forgecli-1.0.1-all.jar` | **Single runnable jar with the kernel bundled in.** Download and `java -jar` it. |
+| `build/libs/forgecli-1.0.1.jar` | Thin jar. Requires the kernel jar on the classpath to run. |
 
 > If dependency resolution fails because the kernel cannot be found, you almost certainly
 > skipped the `publishToMavenLocal` in step 1.
@@ -381,6 +382,35 @@ meminfo                ← tlbHits / tlbMisses / hitRatio
 
 ---
 
+## Using it as a library
+
+As of `1.0.1` ForgeCLI is both an executable and a **command-layer library**. The `command`
+and `shell` packages are exported so that GUI clients can run the exact same command set.
+
+```bash
+./gradlew publishToMavenLocal      # io.github.jongwoo0101:forgecli:1.0.1
+```
+
+```java
+ShellContext context = new ShellContext();                // one per window — holds the cwd
+CommandRegistry registry = StandardCommands.createRegistry(context);
+
+SystemCallResult result = registry.dispatch(kernel, "exec worker 20");
+System.out.println(result.getMessage());
+```
+
+`dispatch` includes whitespace tokenisation, so the same string produces exactly the same
+result as it would in the shell. That is why the Terminal app in
+[ForgeOS](https://github.com/Jongwoo0101/forge-os) contains **no command parser of its own**.
+
+> `ShellContext` is a **mutable** holder for the current working directory. Each window (or
+> tab) needs its own cwd, so build one registry per window. Share it globally and a `cd` in
+> one window silently moves the others.
+
+`ForgeShell` itself is not exported — being tied to stdin/stdout is the CLI's own concern.
+
+---
+
 ## Project layout
 
 ```text
@@ -393,18 +423,19 @@ forge-cli/
 │   ├── build.sh
 │   └── run.sh
 └── src/main/java/
-    ├── module-info.java             # requires forgeframework;
+    ├── module-info.java              # requires transitive forgeframework; exports command · shell
     └── forgeframework/cli/
-        ├── ForgeCli.java            # entry point — banner · logger · boot · shell
+        ├── ForgeCli.java             # entry point — banner · logger · boot · shell
         ├── shell/
-        │   ├── ForgeShell.java      # the REPL loop and command registration
-        │   ├── ShellContext.java    # current working directory (the shell's only state)
-        │   └── ShellPrompt.java     # prompt rendering
+        │   ├── ForgeShell.java       # the stdin/stdout REPL loop (the CLI's own concern)
+        │   ├── ShellContext.java     # current working directory (the shell's only state)
+        │   └── ShellPrompt.java      # prompt rendering
         └── command/
-            ├── Command.java         # name() · description() · execute()
-            ├── CommandRegistry.java # insertion-ordered lookup table
-            ├── UnknownCommand.java  # Null Object
-            └── ...                  # 33 commands
+            ├── Command.java          # name() · description() · execute()
+            ├── CommandRegistry.java  # lookup table + dispatch(kernel, line)
+            ├── StandardCommands.java # the single registration point for all 33 commands
+            ├── UnknownCommand.java   # Null Object
+            └── ...                   # 33 command implementations
 ```
 
 ### Design principles
@@ -415,7 +446,8 @@ forge-cli/
   alignment and colour you see above is produced by the Command classes in this repository.
   Render the same DTOs into a GUI and you get ForgeOS.
 - **Adding a command is one file plus one line.** Implement `Command` and register it in
-  `ForgeShell.registerDefaultCommands()`; it shows up in `help` automatically.
+  `StandardCommands.createRegistry(...)`; it shows up in `help` **and** in the ForgeOS
+  Terminal automatically. One registration point means the two clients cannot drift apart.
 - **The shell owns exactly one piece of state: the current working directory.** Everything
   else lives in the kernel.
 
@@ -437,8 +469,11 @@ forge-cli/
     <td><b>forge-cli</b><br><sub>This repository — the kernel's command-line client</sub></td>
   </tr>
   <tr>
-    <td width="64" align="center"></td>
-    <td><b>ForgeOS</b><br><sub>JavaFX GUI operating-system simulator (planned)</sub></td>
+    <td width="64" align="center"><img src="assets/forge-os-logo.svg" alt="" width="48"></td>
+    <td>
+      <b><a href="https://github.com/Jongwoo0101/forge-os">forge-os</a></b><br>
+      <sub>JavaFX GUI operating-system simulator — its Terminal app reuses this repository's command layer</sub>
+    </td>
   </tr>
   <tr>
     <td width="64" align="center"></td>

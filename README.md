@@ -41,6 +41,7 @@ ForgeCLI는 [ForgeFramework](https://github.com/Jongwoo0101/forge-framework) 커
   - [장치 · 인터럽트](#장치--인터럽트)
   - [자원 · 교착 상태](#자원--교착-상태)
 - [시나리오로 배우기](#시나리오로-배우기)
+- [라이브러리로 쓰기](#라이브러리로-쓰기)
 - [프로젝트 구조](#프로젝트-구조)
 - [License](#license)
 
@@ -70,7 +71,7 @@ git clone https://github.com/Jongwoo0101/forge-cli.git
 cd forge-cli
 
 ./scripts/build.sh                 # 또는 ./gradlew build
-./scripts/run.sh                   # 또는 java -jar build/libs/forgecli-1.0-all.jar
+./scripts/run.sh                   # 또는 java -jar build/libs/forgecli-1.0.1-all.jar
 ```
 
 개발 중이라면 Gradle에서 바로 띄우는 쪽이 빠릅니다.
@@ -83,8 +84,8 @@ cd forge-cli
 
 | 파일 | 설명 |
 |---|---|
-| `build/libs/forgecli-1.0-all.jar` | **커널이 포함된 단일 실행 jar.** 받아서 `java -jar`로 바로 실행됩니다. |
-| `build/libs/forgecli-1.0.jar` | 얇은 jar. 실행하려면 커널 jar가 클래스패스에 필요합니다. |
+| `build/libs/forgecli-1.0.1-all.jar` | **커널이 포함된 단일 실행 jar.** 받아서 `java -jar`로 바로 실행됩니다. |
+| `build/libs/forgecli-1.0.1.jar` | 얇은 jar. 실행하려면 커널 jar가 클래스패스에 필요합니다. |
 
 > 커널을 찾지 못해 의존성 해석에서 실패한다면, 1번 단계의 `publishToMavenLocal`을
 > 실행하지 않았을 가능성이 큽니다.
@@ -383,6 +384,36 @@ meminfo                ← tlbHits / tlbMisses / hitRatio
 
 ---
 
+## 라이브러리로 쓰기
+
+`1.0.1`부터 ForgeCLI는 실행 파일이면서 동시에 **명령어 계층 라이브러리**입니다.
+GUI 클라이언트가 같은 명령어 세트를 쓸 수 있도록 `command` · `shell` 두 패키지를
+공개 API로 개방했습니다.
+
+```bash
+./gradlew publishToMavenLocal      # io.github.jongwoo0101:forgecli:1.0.1
+```
+
+```java
+ShellContext context = new ShellContext();                // 창마다 하나 — cwd 보관소
+CommandRegistry registry = StandardCommands.createRegistry(context);
+
+SystemCallResult result = registry.dispatch(kernel, "exec worker 20");
+System.out.println(result.getMessage());
+```
+
+`dispatch`는 공백 기준 토큰 분리까지 포함합니다. 같은 문자열을 넣으면 셸과 정확히 같은
+결과가 나오며, 이것이 [ForgeOS](https://github.com/Jongwoo0101/forge-os)의 터미널 앱이
+명령어 파서를 **한 줄도 새로 쓰지 않은** 이유입니다.
+
+> `ShellContext`는 현재 작업 디렉터리를 들고 있는 **가변** 객체입니다. 창(탭)마다 cwd가
+> 독립적이어야 하므로 레지스트리도 창마다 하나씩 만드십시오. 전역으로 공유하면 한 창에서
+> `cd`한 것이 다른 창에도 반영됩니다.
+
+표준 입출력에 묶인 `ForgeShell`은 개방하지 않았습니다. 그것은 CLI 고유의 책임입니다.
+
+---
+
 ## 프로젝트 구조
 
 ```text
@@ -395,18 +426,19 @@ forge-cli/
 │   ├── build.sh
 │   └── run.sh
 └── src/main/java/
-    ├── module-info.java             # requires forgeframework;
+    ├── module-info.java              # requires transitive forgeframework; command · shell 개방
     └── forgeframework/cli/
-        ├── ForgeCli.java            # 진입점 — 배너 · 로거 · 부팅 · 셸
+        ├── ForgeCli.java             # 진입점 — 배너 · 로거 · 부팅 · 셸
         ├── shell/
-        │   ├── ForgeShell.java      # REPL 루프와 명령어 등록
-        │   ├── ShellContext.java    # 현재 작업 디렉터리 (셸이 소유하는 유일한 상태)
-        │   └── ShellPrompt.java     # 프롬프트 렌더링
+        │   ├── ForgeShell.java       # 표준 입출력 REPL 루프 (CLI 고유 책임)
+        │   ├── ShellContext.java     # 현재 작업 디렉터리 (셸이 소유하는 유일한 상태)
+        │   └── ShellPrompt.java      # 프롬프트 렌더링
         └── command/
-            ├── Command.java         # name() · description() · execute()
-            ├── CommandRegistry.java # 등록 순서를 유지하는 조회 테이블
-            ├── UnknownCommand.java  # Null Object
-            └── ...                  # 명령어 33종
+            ├── Command.java          # name() · description() · execute()
+            ├── CommandRegistry.java  # 조회 테이블 + dispatch(kernel, line)
+            ├── StandardCommands.java # 표준 명령어 33종의 유일한 등록 지점
+            ├── UnknownCommand.java   # Null Object
+            └── ...                   # 명령어 구현 33개
 ```
 
 ### 설계 원칙
@@ -417,7 +449,8 @@ forge-cli/
   표·정렬·색은 전부 이 저장소의 Command 클래스가 만듭니다. 같은 DTO로 GUI를 그리면
   그것이 ForgeOS입니다.
 - **명령어 추가는 파일 하나 + 등록 한 줄**입니다. `Command`를 구현하고
-  `ForgeShell.registerDefaultCommands()`에 등록하면 `help`에도 자동으로 나타납니다.
+  `StandardCommands.createRegistry(...)`에 등록하면 `help`에도, ForgeOS 터미널에도
+  자동으로 나타납니다. 등록 지점이 한 곳뿐이라 두 클라이언트가 어긋날 수 없습니다.
 - **셸이 소유하는 상태는 현재 작업 디렉터리 하나뿐**입니다. 나머지는 전부 커널에 있습니다.
 
 ---
@@ -438,8 +471,11 @@ forge-cli/
     <td><b>forge-cli</b><br><sub>본 저장소 — 커널의 명령줄 클라이언트</sub></td>
   </tr>
   <tr>
-    <td width="64" align="center"></td>
-    <td><b>ForgeOS</b><br><sub>JavaFX 기반 GUI 운영체제 시뮬레이터 (예정)</sub></td>
+    <td width="64" align="center"><img src="assets/forge-os-logo.svg" alt="" width="48"></td>
+    <td>
+      <b><a href="https://github.com/Jongwoo0101/forge-os">forge-os</a></b><br>
+      <sub>JavaFX 기반 GUI 운영체제 시뮬레이터 — 터미널 앱이 본 저장소의 명령어 계층을 재사용합니다</sub>
+    </td>
   </tr>
   <tr>
     <td width="64" align="center"></td>
