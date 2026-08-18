@@ -17,6 +17,10 @@ import java.util.List;
  */
 public final class DevinfoCommand implements Command {
 
+
+    /** 기본 생성자 — 상태가 없어 인자를 받지 않는다. */
+    public DevinfoCommand() {
+    }
     @Override
     public String name() {
         return "devinfo";

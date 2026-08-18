@@ -16,6 +16,10 @@ import forgeframework.syscall.SystemCallType;
  */
 public final class ResInfoCommand implements Command {
 
+
+    /** 기본 생성자 — 상태가 없어 인자를 받지 않는다. */
+    public ResInfoCommand() {
+    }
     @Override
     public String name() {
         return "res_info";

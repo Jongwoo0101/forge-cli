@@ -15,6 +15,10 @@ import forgeframework.syscall.SystemCallType;
  */
 public final class DetectCommand implements Command {
 
+
+    /** 기본 생성자 — 상태가 없어 인자를 받지 않는다. */
+    public DetectCommand() {
+    }
     @Override
     public String name() {
         return "detect";

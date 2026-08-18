@@ -12,6 +12,10 @@ import forgeframework.syscall.SystemCallType;
  */
 public final class TranslateCommand implements Command {
 
+
+    /** 기본 생성자 — 상태가 없어 인자를 받지 않는다. */
+    public TranslateCommand() {
+    }
     @Override
     public String name() {
         return "translate";

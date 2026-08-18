@@ -14,6 +14,10 @@ import forgeframework.syscall.SystemCallType;
  */
 public final class ResFreeCommand implements Command {
 
+
+    /** 기본 생성자 — 상태가 없어 인자를 받지 않는다. */
+    public ResFreeCommand() {
+    }
     @Override
     public String name() {
         return "res_free";

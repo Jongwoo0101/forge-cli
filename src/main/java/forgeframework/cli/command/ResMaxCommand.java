@@ -17,6 +17,10 @@ import forgeframework.syscall.SystemCallType;
  */
 public final class ResMaxCommand implements Command {
 
+
+    /** 기본 생성자 — 상태가 없어 인자를 받지 않는다. */
+    public ResMaxCommand() {
+    }
     @Override
     public String name() {
         return "res_max";
