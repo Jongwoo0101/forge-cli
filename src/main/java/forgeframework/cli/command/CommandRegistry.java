@@ -1,5 +1,10 @@
 package forgeframework.cli.command;
 
+import forgeframework.common.ForgeOSConstants;
+import forgeframework.kernel.Kernel;
+import forgeframework.syscall.SystemCallResult;
+
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,6 +18,10 @@ import java.util.Map;
 public class CommandRegistry {
 
     private final Map<String, Command> commands = new LinkedHashMap<>();
+
+    /** 빈 레지스트리를 만든다. 표준 명령어 세트는 {@link StandardCommands}가 채운다. */
+    public CommandRegistry() {
+    }
 
     /**
      * 명령어를 레지스트리에 등록한다.
@@ -40,5 +49,28 @@ public class CommandRegistry {
      */
     public Collection<Command> getAll() {
         return commands.values();
+    }
+
+    /**
+     * 입력 한 줄을 토큰으로 나눠 해당 명령어를 실행한다.
+     *
+     * <p>토큰 분리 규칙(공백 기준)을 여기 한 곳에 두는 이유는, CLI 셸과 GUI
+     * 터미널이 같은 문자열을 넣었을 때 반드시 같은 결과를 내야 하기 때문이다.
+     * 양쪽이 각자 {@code split}을 부르면 언젠가 규칙이 어긋난다.</p>
+     *
+     * <p>빈 줄은 호출하는 쪽에서 걸러야 한다 — 여기서는 판단하지 않는다.</p>
+     *
+     * @param kernel 명령을 위임할 커널
+     * @param line   사용자가 입력한 한 줄 (앞뒤 공백은 이 메서드가 제거한다)
+     * @return 명령 실행 결과. 등록되지 않은 명령이면 {@link UnknownCommand}의 실패 결과
+     */
+    public SystemCallResult dispatch(Kernel kernel, String line) {
+        String[] tokens = line.trim().split(ForgeOSConstants.COMMAND_DELIMITER);
+        String commandName = tokens[0];
+        String[] args = (tokens.length > 1)
+                ? Arrays.copyOfRange(tokens, 1, tokens.length)
+                : new String[0];
+
+        return resolve(commandName).execute(kernel, args);
     }
 }

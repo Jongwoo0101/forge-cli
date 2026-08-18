@@ -1,106 +1,44 @@
 package forgeframework.cli.shell;
 
-import forgeframework.cli.command.BankerCommand;
-import forgeframework.cli.command.CatCommand;
-import forgeframework.cli.command.CdCommand;
-import forgeframework.cli.command.Command;
 import forgeframework.cli.command.CommandRegistry;
-import forgeframework.cli.command.DetectCommand;
-import forgeframework.cli.command.DevinfoCommand;
-import forgeframework.cli.command.DiskFinishCommand;
-import forgeframework.cli.command.ExecCommand;
-import forgeframework.cli.command.FrameTableCommand;
-import forgeframework.cli.command.FreeCommand;
-import forgeframework.cli.command.HelpCommand;
-import forgeframework.cli.command.IoRequestCommand;
-import forgeframework.cli.command.KillCommand;
-import forgeframework.cli.command.LsCommand;
-import forgeframework.cli.command.MallocCommand;
-import forgeframework.cli.command.MeminfoCommand;
-import forgeframework.cli.command.MkdirCommand;
-import forgeframework.cli.command.PsCommand;
-import forgeframework.cli.command.PwdCommand;
-import forgeframework.cli.command.RecoverCommand;
-import forgeframework.cli.command.ResFreeCommand;
-import forgeframework.cli.command.ResInfoCommand;
-import forgeframework.cli.command.ResMaxCommand;
-import forgeframework.cli.command.ResReqCommand;
-import forgeframework.cli.command.RmCommand;
-import forgeframework.cli.command.SchedulerCommand;
-import forgeframework.cli.command.ShutdownCommand;
-import forgeframework.cli.command.SoftIntCommand;
-import forgeframework.cli.command.TouchCommand;
-import forgeframework.cli.command.TranslateCommand;
-import forgeframework.cli.command.TreeCommand;
-import forgeframework.cli.command.TypeCommand;
-import forgeframework.cli.command.UptimeCommand;
-import forgeframework.cli.command.WriteCommand;
+import forgeframework.cli.command.StandardCommands;
 import forgeframework.common.ForgeOSConstants;
 import forgeframework.kernel.Kernel;
 import forgeframework.syscall.SystemCallResult;
 
 import java.util.Scanner;
 
+/**
+ * 표준 입출력에 붙는 대화형 셸.
+ *
+ * <p>명령어 목록과 토큰 분리 규칙은 이 클래스가 소유하지 않는다.
+ * 각각 {@link StandardCommands}와 {@link CommandRegistry#dispatch}에 있으며,
+ * 이 클래스는 "System.in에서 한 줄 읽어 System.out에 결과를 찍는다"는
+ * CLI 고유의 책임만 남긴다. ForgeOS의 Terminal 앱은 같은 레지스트리를 쓰되
+ * 입출력만 JavaFX 컨트롤로 바꿔 끼운다.</p>
+ */
 public class ForgeShell {
 
     private final Kernel kernel;
     private final CommandRegistry registry;
-    private final ShellContext context;
     private final ShellPrompt prompt;
     private final Scanner input;
 
+    /**
+     * 주어진 커널에 붙는 셸을 만든다.
+     *
+     * @param kernel 명령을 위임할 커널
+     */
     public ForgeShell(Kernel kernel) {
+        ShellContext context = new ShellContext();
+
         this.kernel = kernel;
-        this.registry = new CommandRegistry();
-        this.context = new ShellContext();
+        this.registry = StandardCommands.createRegistry(context);
         this.prompt = new ShellPrompt(context);
         this.input = new Scanner(System.in);
-        registerDefaultCommands();
     }
 
-    private void registerDefaultCommands() {
-        registry.register(new HelpCommand(registry));
-        registry.register(new ShutdownCommand());
-        registry.register(new UptimeCommand());
-
-        registry.register(new PsCommand());
-        registry.register(new ExecCommand());
-        registry.register(new KillCommand());
-        registry.register(new SchedulerCommand());
-        registry.register(new MallocCommand());
-        registry.register(new FreeCommand());
-        registry.register(new MeminfoCommand());
-        registry.register(new TranslateCommand());
-        registry.register(new FrameTableCommand());
-
-        // Phase 4 — File System
-        registry.register(new PwdCommand(context));
-        registry.register(new CdCommand(context));
-        registry.register(new LsCommand(context));
-        registry.register(new MkdirCommand(context));
-        registry.register(new TouchCommand(context));
-        registry.register(new RmCommand(context));
-        registry.register(new WriteCommand(context));
-        registry.register(new CatCommand(context));
-        registry.register(new TreeCommand(context));
-
-        // Phase 5 — Device & Interrupt
-        registry.register(new DevinfoCommand());
-        registry.register(new IoRequestCommand());
-        registry.register(new TypeCommand());
-        registry.register(new DiskFinishCommand());
-        registry.register(new SoftIntCommand());
-
-        // Phase 6 — Deadlock (자원 할당 및 교착 상태)
-        registry.register(new ResInfoCommand());
-        registry.register(new ResMaxCommand());
-        registry.register(new ResReqCommand());
-        registry.register(new ResFreeCommand());
-        registry.register(new BankerCommand());
-        registry.register(new DetectCommand());
-        registry.register(new RecoverCommand());
-    }
-
+    /** 커널이 종료되거나 표준 입력이 닫힐 때까지 REPL을 돈다. */
     public void run() {
         System.out.println(ForgeOSConstants.OS_NAME + " Shell에 오신 것을 환영합니다. 'help'를 입력해보세요.");
 
@@ -116,22 +54,10 @@ public class ForgeShell {
                 continue;
             }
 
-            handleLine(line);
+            SystemCallResult result = registry.dispatch(kernel, line);
+            System.out.println(result.getMessage());
         }
 
         input.close();
-    }
-
-    private void handleLine(String line) {
-        String[] tokens = line.split(ForgeOSConstants.COMMAND_DELIMITER);
-        String commandName = tokens[0];
-        String[] args = (tokens.length > 1)
-                ? java.util.Arrays.copyOfRange(tokens, 1, tokens.length)
-                : new String[0];
-
-        Command command = registry.resolve(commandName);
-        SystemCallResult result = command.execute(kernel, args);
-
-        System.out.println(result.getMessage());
     }
 }
