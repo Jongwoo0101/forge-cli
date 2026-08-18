@@ -34,3 +34,10 @@ Thumbs.db
 # ===== Misc =====
 *.tmp
 *.bak
+
+# Cowork 세션이 로컬 파일을 지울 수 없어 대신 옮겨 두는 곳.
+_to_delete/
+
+# JVM 크래시 덤프
+hs_err_pid*.log
+replay_pid*.log
